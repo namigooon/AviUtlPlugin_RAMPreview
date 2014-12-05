@@ -1,0 +1,4 @@
+LIBRARY rampreview
+
+EXPORTS
+	GetFilterTable @1

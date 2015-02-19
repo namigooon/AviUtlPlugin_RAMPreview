@@ -3,6 +3,7 @@
 // Used by rampreview.rc
 //
 
+#define	IDM_RAMPREVIEW			50
 #define IDM_PLAY_START                  100
 #define IDM_PLAY_STOP                   102
 #define	IDM_PLAY_READ			103
@@ -11,6 +12,9 @@
 #define IDM_PLAY_PLAY_ALL               120
 #define IDM_PLAY_PLAY_VIDEO             121
 #define IDM_PLAY_PLAY_AUDIO             122
+#define	IDM_PLAY_QUALITY_ORIGINAL	130
+#define	IDM_PLAY_QUALITY_HALF		131
+#define	IDM_PLAY_QUALITY_QUARTER	132
 #define	IDM_PLAY_CLEARMEMORY		180
 #define IDM_PLAY_CONFIG                 190
 #define	IDM_PLAY_INFORMATION		199
@@ -33,6 +37,8 @@
 #define	IDC_BUTTON_READ			10053
 #define	IDC_BUTTON_VOLUME		10054
 
+#define	IDS_MEMORY_INFO			20000
+
 #define PREVIEW_TIMER                   100000
 
 
@@ -47,3 +53,5 @@
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
+
+

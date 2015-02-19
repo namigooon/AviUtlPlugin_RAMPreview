@@ -1,8 +1,8 @@
 //----------------------------------------------------------------------------------------------------
 // RAM Preview
-// 	Ver. 0.02
+// 	Ver. 0.03beta
 // 
-//	2014/02/28 - 2014/11/24
+//	2014/02/28 - 2015/02/19
 //			hksy
 //----------------------------------------------------------------------------------------------------
 
@@ -20,14 +20,16 @@
 #include	<process.h>
 
 #include	"filter.h"
+#include	"RAMImage.h"
+#include	"View.h"
 #include	"resource.h"
 
 #pragma		comment(lib, "winmm.lib")
 
 //--------------------------------------------------
 
-TCHAR	*FilterName	= "RAMプレビュー";
-TCHAR	*FilterInfo	= "RAMプレビュー version 0.02 by 白水";
+#define	WM_READDATA_END		WM_USER+0
+#define	WM_READDATA_FRAME	WM_USER+1
 
 //--------------------------------------------------
 
@@ -37,17 +39,17 @@ TCHAR	*FilterInfo	= "RAMプレビュー version 0.02 by 白水";
 #define	WINDOW_BOTTOM		32
 #define	BUTTON_SIZE		24
 #define	BUTTON_SIZE_MINI	18
+#define	BUTTON_PADDING		4
 #define	READFRAME_HEIGHT	3
 
-#define	DEF_USEMEMORY		4096
+#define	DEF_USEMEMORY		4
+#define	USEMEMORY_UNIT		20	// 使用メモリの単位[bit] 20->MB
+
+
 
 //--------------------------------------------------
 
-#define	WM_READDATA_END		WM_USER+0
-
-//--------------------------------------------------
-
-typedef enum{
+enum VIEWSIZE{
 	SIZE_PERCENT025,
 	SIZE_PERCENT050,
 	SIZE_PERCENT100,
@@ -56,53 +58,61 @@ typedef enum{
 	SIZE_PX320,
 	SIZE_PX160,
 	SIZE_WINDOW
-}VIEWSIZE;
-
-typedef	enum{
+};
+enum PLAYMODE{
 	PLAY_ALL,
 	PLAY_VIDEO,
 	PLAY_AUDIO
-}PLAYMODE;
+};
+enum PREVIEWQUALITY{
+	PQ_ORIGINAL	= 100,
+	PQ_HALF		=  50,
+	PQ_QUARTER	=  25,
+	PQ_USER		=   0
+};
+
+struct RP_CONFIG{
+	VIEWSIZE	ViewSize;
+	PLAYMODE	PlayMode;
+	bool		isPlaySelect;
+	bool		isPlayLoop;
+	int		PreviewQuality;
+	int		UseMemory;
+};
 
 //--------------------------------------------------
 
-const int	DW_SIZE	= sizeof(DWORD);
-
-#define	SETARRAYDATA(dst,src)	memcpy_s((void*)dst,sizeof(dst),(void*)src,sizeof(dst))
-
-const BYTE	HeaderChunkID[]		= {'R','I','F','F'};
-const BYTE	HeaderFormType[]	= {'W','A','V','E'};
-const BYTE	FormatChunkID[]		= {'f','m','t',' '};
-const BYTE	DataChunkID[]		= {'d','a','t','a'};
-
-#pragma pack(push,1)	// アライメントを詰める
-
-typedef struct tagWAVEFILEHEADER{
-	BYTE		FileSignature[4];
-	DWORD		FileSize;
-	BYTE		FileType[4];
-	BYTE		FormatChunkID[4];
-	DWORD		FormatChunkSize;
-	WAVEFORMATEX	Format;
-	BYTE		DataChunkID[4];
-	DWORD		DataChunkSize;
-}WAVEFILEHEADER;
-typedef struct tagINTSIZE{
-	int	cx;
-	int	cy;
-}INTSIZE;
-
-#pragma pack(pop)
-
-//--------------------------------------------------
+template<class T>inline bool	isRange(T v, T s, T e, bool seq=true, bool eeq=false){
+	if(seq==true){	if(v<s){	return false;	}}
+	else{		if(v<=s){	return false;	}}
+	if(eeq==true){	if(e<v){	return false;	}}
+	else{		if(e<=v){	return false;	}}
+	return true;
+}
+template<class T>inline T	Range(T v, T s, T e){
+	return (s<v)?(e<v)?e:v:s;
+}
 
 #ifndef	MAKEDWORD
 #define	MAKEDWORD(a,b)	(((a)&0xFFFF)|(((b)&0xFFFF)<<16))
 #endif
 
-#define	RANGE(v,r1,r2)			(((v)<(r1))?(r1):((r2)<(v)?r2:v))
 #define	NUMDATATORESID_SIZE(num)	(IDM_VIEW_SIZE_PERCENT025	+(num))
 #define	NUMDATATORESID_PLAY(num)	(IDM_PLAY_PLAY_ALL		+(num))
+
+#define	SETARRAYDATA(dst,src)	memcpy_s((void*)dst,sizeof(dst),(void*)src,sizeof(dst))
+
+double	GetFPS(FILTER *fp, void* editp);
+
+//--------------------------------------------------
+
+extern FILTER_DLL	filter;
+extern const int	SizePerList[];
+extern const int	SizePxList[];
+extern const DWORD	COLOR_READFRAME;
+extern const DWORD	COLOR_VIEWFRAME;
+
+
 
 // Debug
 //--------------------------------------------------
@@ -121,7 +131,5 @@ typedef struct tagINTSIZE{
 //--------------------------------------------------
 
 #endif	// _H_APF_RAMPREVIEW
-
-
 
 

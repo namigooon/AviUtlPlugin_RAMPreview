@@ -13,20 +13,18 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 日本語 resources
+// 日本語 (日本) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
-#ifdef _WIN32
 LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
 #pragma code_page(932)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDM_RAMPREVIEW MENU 
+IDM_RAMPREVIEW MENU
 BEGIN
     POPUP "再生"
     BEGIN
@@ -42,6 +40,12 @@ BEGIN
             MENUITEM "映像+音声",                   IDM_PLAY_PLAY_ALL
             MENUITEM "映像のみ",                    IDM_PLAY_PLAY_VIDEO
             MENUITEM "音声のみ",                    IDM_PLAY_PLAY_AUDIO
+        END
+        POPUP "画質"
+        BEGIN
+            MENUITEM "1/1",                         IDM_PLAY_QUALITY_ORIGINAL
+            MENUITEM "1/2",                         IDM_PLAY_QUALITY_HALF
+            MENUITEM "1/4",                         IDM_PLAY_QUALITY_QUARTER
         END
         MENUITEM SEPARATOR
         MENUITEM "メモリの解放",                    IDM_PLAY_CLEARMEMORY
@@ -101,7 +105,7 @@ FONT 9, "MS UI Gothic", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,41,238,44,14
     PUSHBUTTON      "キャンセル",IDCANCEL,91,238,44,14
-    LTEXT           "画像用メモリ(KB)",IDC_USEMEMORY_STATIC,7,7,64,8
+    LTEXT           "画像用メモリ(MB)",IDC_USEMEMORY_STATIC,7,7,64,8
     EDITTEXT        IDC_USEMEMORY_EDIT,128,7,40,12,ES_AUTOHSCROLL | ES_NUMBER
 END
 
@@ -112,7 +116,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_CONFIG, DIALOG
     BEGIN
@@ -137,7 +141,18 @@ ICON_PAUSE              ICON                    "resource\\ICON_PAUSE.ico"
 ICON_STOP               ICON                    "resource\\ICON_STOP.ico"
 ICON_READ               ICON                    "resource\\ICON_READ.ico"
 ICON_VOLUME             ICON                    "resource\\ICON_VOL.ico"
-#endif    // 日本語 resources
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+	IDS_MEMORY_INFO		"映像メモリ\t%.2f MB\n音声メモリ\t%.2f MB\nプレビュー\t%d フレーム"
+END
+
+#endif    // 日本語 (日本) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

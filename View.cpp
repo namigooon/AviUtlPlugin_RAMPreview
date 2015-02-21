@@ -256,6 +256,10 @@ bool	View::Play(FILTER *fp, void *editp){
 	this->isPlaying		= true;
 	this->ProjectFPS	= GetFPS(fp, editp);
 
+	PLAYMODE	PlayMode= this->Config->PlayMode;
+	bool	isPlayVideo	= PlayMode==PLAY_ALL || PlayMode==PLAY_VIDEO;
+	bool	isPlayAudio	= PlayMode==PLAY_ALL || PlayMode==PLAY_AUDIO;
+
 	while(this->isPlaying){
 		// Ä¶I—¹
 		if(nowFrame>=endFrame){
@@ -272,11 +276,14 @@ bool	View::Play(FILTER *fp, void *editp){
 
 		// ŠJŽnƒtƒŒ[ƒ€
 		if(startFrame==nowFrame){
-			// ”wŒiÁ‹Ž
-			this->EraseImage();
+			// ‰f‘œÄ¶
+			if(isPlayVideo){
+				// ”wŒiÁ‹Ž
+				this->EraseImage();
+			}
 
 			// ‰¹ºÄ¶
-			if(this->Config->PlayMode==PLAY_ALL || this->Config->PlayMode==PLAY_AUDIO){
+			if(isPlayAudio){
 				PlaySound((LPCSTR)this->Ram->GetMemAudioFile(), NULL, SND_MEMORY|SND_ASYNC);
 			}
 		}

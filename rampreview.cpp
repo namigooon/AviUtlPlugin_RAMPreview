@@ -1,8 +1,8 @@
 //----------------------------------------------------------------------------------------------------
 // RAM Preview
-// 	Ver. 0.03beta
+// 	Ver. 0.03
 // 
-//	2014/02/28 - 2015/02/19
+//	2014/02/28 - 2015/02/21
 //			hksy
 //----------------------------------------------------------------------------------------------------
 
@@ -209,6 +209,8 @@ void	ReadIniData(FILTER *fp){
 	Config.isPlayLoop	=			fp->exfunc->ini_load_int(fp,"PlayLoop",		FALSE)!=FALSE;
 	Config.PreviewQuality	= (PREVIEWQUALITY)	fp->exfunc->ini_load_int(fp,"PlaviewQuality",	PQ_ORIGINAL);
 	Config.UseMemory	=			fp->exfunc->ini_load_int(fp,"UseMemory",	DEF_USEMEMORY);
+
+	Config.PreviewQuality	= Range(Config.PreviewQuality, 0, 100);
 }
 void	WriteIniData(FILTER *fp){
 	fp->exfunc->ini_save_int(fp,"ViewSize",		Config.ViewSize);
@@ -360,7 +362,7 @@ BOOL func_WndProc( HWND hwnd,UINT message,WPARAM wparam,LPARAM lparam,void *edit
 				case IDM_VIEW_SIZE_WINDOW:{
 						Config.ViewSize	= (VIEWSIZE)(CommandID-IDM_VIEW_SIZE_PERCENT025);
 
-						SIZE	size	= RamImage->GetOriginalScreenSize();
+						SIZE	size	= RamImage->GetScreenSize();
 						if(size.cx==0 || size.cy==0){
 							GetScreenSize(fp, editp, nowFrame, (int*)&size.cx, (int*)&size.cy);
 						}
@@ -466,7 +468,7 @@ BOOL func_WndProc( HWND hwnd,UINT message,WPARAM wparam,LPARAM lparam,void *edit
 			break;
 		}	// switch(WM_COMMAND)
 
-		case WM_READDATA_FRAME:{	// RAMを1フレーム読むごとに送られてくる
+		case WM_READDATA_FRAME:{	// RAMに1フレーム読むごとに送られてくる
 			UINT	frame_r	= (UINT)wparam;	// 読み込んだフレーム番号			
 			Viewer->DisplayRam(frame_r, fp, editp);
 

@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------------------------------------
 // RAMImage.cpp
-//	2015/02/15 - 2015/02/19
+//	2015/02/15 - 2015/02/21
 //			hksy
 //----------------------------------------------------------------------------------------------------
 
@@ -189,6 +189,10 @@ void	VideoMemory::Update(FILTER *fp, void *editp, double quality){
 	this->ScreenSize.cx	= (LONG)(w*quality);
 	this->ScreenSize.cy	= (LONG)(h*quality);
 
+	// 4バイト境界に合わせる
+	this->ScreenSize.cx	+=4-this->ScreenSize.cx%4;
+	this->ScreenSize.cy	+=4-this->ScreenSize.cy%4;
+
 	this->FrameSize		= ScreenSize.cx*ScreenSize.cy * sizeof(PIXEL);
 	this->PreviewFrame	= (UINT)floor((double)this->GetMemorySize()/FrameSize);
 
@@ -271,9 +275,26 @@ int	AudioMemory::GetChannel() const{
 // class RAMImage
 //--------------------------------------------------
 
-// TODO : resize
+void	ResizeImage(PIXEL *dst, PIXEL *src, int dw, int dh, int sw, int sh){
+	// リサイズ めんどくさいのでニアレストネイバーで
+
+	double	addx	= (double)sw/dw;
+	double	addy	= (double)sw/dw;
+
+	for(int iy=0;iy<dh;iy++){
+		int	dyi	= iy*dw;
+		int	syi	= (int)(iy*addy)*sw;
+
+		for(int ix=0;ix<dw;ix++){
+			int	dxi	= ix;
+			int	sxi	= (int)(ix*addx);
+			dst[dyi+dxi]	= src[syi+sxi];
+		}
+	}
+}
+
 void	ReadFrame(FILTER *fp, void* editp, int frame, int index,
-	VideoMemory *VMemory, AudioMemory *AMemory)
+	VideoMemory *VMemory, AudioMemory *AMemory, PIXEL *resize)
 {
 	// 1フレーム読み込み
 
@@ -291,7 +312,8 @@ void	ReadFrame(FILTER *fp, void* editp, int frame, int index,
 			fp->exfunc->get_pixel_filtered(editp, frame, vmem, NULL, NULL);
 		}
 		else{			// resize
-			// TODO
+			fp->exfunc->get_pixel_filtered(editp, frame, resize, NULL, NULL);
+			ResizeImage((PIXEL*)vmem, resize, dw,dh, sw, sh);
 		}
 	}
 	if(amem!=NULL){
@@ -315,6 +337,11 @@ unsigned __stdcall ReadDataSubThreadProc(LPVOID lpParam){
 
 	DebugLog("Read Thread / %dframe +%dframe", StartFrame, MaxReadFrame);
 
+	// create work buffer
+	int	sw,sh;
+	fp->exfunc->get_pixel_filtered(editp, StartFrame, NULL, &sw, &sh);
+	PIXEL	*resize			= new PIXEL[sw*sh];
+
 	// read init
 	int	frame			= StartFrame;
 	*ReadCompleteFrame		= 0;
@@ -327,7 +354,7 @@ unsigned __stdcall ReadDataSubThreadProc(LPVOID lpParam){
 
 		int	index	= *ReadCompleteFrame;
 
-		ReadFrame(fp, editp, frame, index, VMemory, AMemory);
+		ReadFrame(fp, editp, frame, index, VMemory, AMemory, resize);
 
 		PostMessage(fp->hwnd, WM_READDATA_FRAME, (WPARAM)frame, (LPARAM)index);
 
@@ -337,6 +364,7 @@ unsigned __stdcall ReadDataSubThreadProc(LPVOID lpParam){
 
 	// read end
 	*isReading	= false;
+	delete[]	resize;
 
 	DebugLog("ReadEnd : Read = %d", *ReadCompleteFrame);
 

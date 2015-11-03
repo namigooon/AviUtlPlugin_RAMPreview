@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------------------------------------
 // RAMImage.cpp
-//	2015/02/15 - 2015/02/21
+//	2015/02/15 - 2015/11/03
 //			hksy
 //----------------------------------------------------------------------------------------------------
 
@@ -190,13 +190,13 @@ void	VideoMemory::Update(FILTER *fp, void *editp, double quality){
 	this->ScreenSize.cy	= (LONG)(h*quality);
 
 	// 4バイト境界に合わせる
-	this->ScreenSize.cx	+=4-this->ScreenSize.cx%4;
-	this->ScreenSize.cy	+=4-this->ScreenSize.cy%4;
+	this->ScreenSize.cx	+=(4-this->ScreenSize.cx&0x03)&0x03;
+	this->ScreenSize.cy	+=(4-this->ScreenSize.cy&0x03)&0x03;
 
 	this->FrameSize		= ScreenSize.cx*ScreenSize.cy * sizeof(PIXEL);
 	this->PreviewFrame	= (UINT)floor((double)this->GetMemorySize()/FrameSize);
 
-	DebugLog("Video : %dx%d %dbpp %dbyte %dframe", w, h, sizeof(PIXEL)*8, FrameSize, PreviewFrame);
+	DebugLog("Video : %dx%d->%dx%d %dbpp %dbyte %dframe", w, h, this->ScreenSize.cx, this->ScreenSize.cy, sizeof(PIXEL)*8, FrameSize, PreviewFrame);
 }
 
 BYTE	*VideoMemory::GetMemory(UINT index){
@@ -279,7 +279,7 @@ void	ResizeImage(PIXEL *dst, PIXEL *src, int dw, int dh, int sw, int sh){
 	// リサイズ めんどくさいのでニアレストネイバーで
 
 	double	addx	= (double)sw/dw;
-	double	addy	= (double)sw/dw;
+	double	addy	= (double)sh/dh;
 
 	for(int iy=0;iy<dh;iy++){
 		int	dyi	= iy*dw;

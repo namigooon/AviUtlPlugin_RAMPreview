@@ -1,4 +1,4 @@
-LIBRARY rampreview
+LIBRARY rampreview.auf
 
 EXPORTS
 	GetFilterTable @1

@@ -14,7 +14,7 @@ AviUtl–{‘Ì‚Ì‚ ‚éƒfƒBƒŒƒNƒgƒŠ‚É plugins ƒtƒHƒ‹ƒ_‚ğì¬‚µA“–ƒvƒ‰ƒOƒCƒ“‚ğ“ü‚ê‚Ü‚·
 3. “Ç‚İ‚İŠ®—¹ŒãA Ä¶¨Ä¶ ‚Ü‚½‚Í‰E‰º’†‰›‚ÌÄ¶ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚Ü‚·B
 
 ## ƒŠƒ“ƒN
-[”z•zƒy[ƒW](http://hksy.web.fc2.com/html/aviutl.html "ƒXƒNƒŠƒvƒg‚¨‚«‚ÎB")  
+[ƒXƒNƒŠƒvƒg”z•zƒy[ƒW](http://hksy.web.fc2.com/html/aviutl.html "ƒXƒNƒŠƒvƒg‚¨‚«‚ÎB")  
 
 ### Ql‹L–i‹Œî•ñ‚àŠÜ‚Ü‚ê‚Ü‚·j  
 [ver 0.01 (Šî–{v‘z)](http://hksy.blog92.fc2.com/blog-entry-847.html "‚ç‚Ş")  

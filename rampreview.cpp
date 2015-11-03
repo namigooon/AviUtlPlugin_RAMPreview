@@ -2,7 +2,7 @@
 // RAM Preview
 // 	Ver. 0.03
 // 
-//	2014/02/28 - 2015/02/21
+//	2014/02/28 - 2015/11/03
 //			hksy
 //----------------------------------------------------------------------------------------------------
 
@@ -10,7 +10,7 @@
 #include	"rampreview.h"
 
 TCHAR		*FilterName	= "RAMプレビュー";
-TCHAR		*FilterInfo	= "RAMプレビュー version 0.03 by hksy";
+TCHAR		*FilterInfo	= "RAMプレビュー version 0.03a by hksy";
 
 RAMImage	*RamImage;
 View		*Viewer;
